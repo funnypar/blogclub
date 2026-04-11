@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:blogclub/carousel/carousel_slider.dart';
 import 'package:blogclub/data.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,28 +17,46 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color primaryTextColor = Color(0xff0D253C);
     final Color secondaryTextColor = Color(0xff2D4379);
+    final Color primaryColor = Color(0xff376AED);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       scrollBehavior: MyCustomScrollBehavior(),
       title: 'Flutter Demo',
       theme: ThemeData(
-          primaryColor: Colors.blue,
+          textButtonTheme: TextButtonThemeData(
+              style: ButtonStyle(
+                  textStyle: WidgetStateProperty.all(TextStyle(
+                      fontSize: 14,
+                      color: primaryColor,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: defaultFontFamily)))),
           textTheme: TextTheme(
-              displayLarge: TextStyle(
-                  fontFamily: defaultFontFamily,
-                  fontWeight: FontWeight.bold,
-                  color: primaryTextColor,
-                  fontSize: 24),
-              titleLarge: TextStyle(
-                  fontFamily: defaultFontFamily,
-                  fontWeight: FontWeight.bold,
-                  color: primaryTextColor,
-                  fontSize: 18),
-              titleMedium: TextStyle(
-                  fontFamily: defaultFontFamily,
-                  color: secondaryTextColor,
-                  fontSize: 14))),
+            displayLarge: TextStyle(
+                fontFamily: defaultFontFamily,
+                fontWeight: FontWeight.bold,
+                color: primaryTextColor,
+                fontSize: 24),
+            titleLarge: TextStyle(
+                fontFamily: defaultFontFamily,
+                fontWeight: FontWeight.bold,
+                color: primaryTextColor,
+                fontSize: 18),
+            titleMedium: TextStyle(
+                fontFamily: defaultFontFamily,
+                color: secondaryTextColor,
+                fontSize: 14),
+            headlineSmall: TextStyle(
+                fontFamily: defaultFontFamily,
+                color: primaryTextColor,
+                fontWeight: FontWeight.w700,
+                fontSize: 20),
+            titleSmall: TextStyle(
+                fontFamily: defaultFontFamily,
+                color: primaryTextColor,
+                fontWeight: FontWeight.w400,
+                fontSize: 14),
+          )),
       home: const HomeScreen(),
     );
   }
@@ -52,6 +71,7 @@ class HomeScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(
@@ -82,7 +102,14 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(
               height: 16,
             ),
-            const CategoryList()
+            const CategoryList(),
+            const SizedBox(
+              height: 12,
+            ),
+            PostList(),
+            const SizedBox(
+              height: 32,
+            )
           ]),
         ),
       ),
@@ -289,4 +316,141 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
         PointerDeviceKind.mouse,
         PointerDeviceKind.trackpad,
       };
+}
+
+class PostList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final posts = AppDatabase.posts;
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 32, right: 24),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Latest News',
+                  style: Theme.of(context).textTheme.headlineSmall),
+              TextButton(onPressed: () {}, child: const Text('More'))
+            ],
+          ),
+        ),
+        ListView.builder(
+            physics: const ClampingScrollPhysics(),
+            itemCount: posts.length,
+            itemExtent: 141, // We should set the itme height
+            shrinkWrap: true, // Set the list height depends on item height
+            itemBuilder: (context, index) {
+              final post = posts[index];
+              return Post(post: post);
+            })
+      ],
+    );
+  }
+}
+
+class Post extends StatelessWidget {
+  const Post({
+    Key? key,
+    required this.post,
+  }) : super(key: key);
+
+  final PostData post;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 149,
+      margin: const EdgeInsets.fromLTRB(32, 8, 32, 8),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: const [
+            BoxShadow(blurRadius: 10, color: Color(0x1a5282FF))
+          ]),
+      child: Row(
+        children: [
+          ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child:
+                  Image.asset('assets/img/posts/small/${post.imageFileName}')),
+          const SizedBox(
+            width: 16,
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  post.caption,
+                  style: const TextStyle(
+                      fontFamily: MyApp.defaultFontFamily,
+                      color: Color(0xff376AED),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  post.title,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Icon(
+                      CupertinoIcons.hand_thumbsup,
+                      size: 16,
+                      color: Theme.of(context).textTheme.bodyMedium!.color,
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      post.likes,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    Icon(
+                      CupertinoIcons.clock,
+                      size: 16,
+                      color: Theme.of(context).textTheme.bodyMedium!.color,
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      post.time,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    Expanded(
+                        child: Container(
+                      margin: const EdgeInsets.only(right: 16),
+                      alignment: Alignment.centerRight,
+                      child: Icon(
+                        post.isBookmarked
+                            ? CupertinoIcons.bookmark_fill
+                            : CupertinoIcons.bookmark,
+                        size: 16,
+                        color: post.isBookmarked
+                            ? Colors.blueAccent
+                            : Theme.of(context).textTheme.bodyMedium!.color,
+                      ),
+                    ))
+                  ],
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
 }
