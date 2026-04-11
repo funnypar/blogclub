@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:blogclub/carousel/carousel_slider.dart';
 import 'package:blogclub/data.dart';
 import 'package:flutter/material.dart';
 
@@ -23,10 +24,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           primaryColor: Colors.blue,
           textTheme: TextTheme(
+              displayLarge: TextStyle(
+                  fontFamily: defaultFontFamily,
+                  fontWeight: FontWeight.bold,
+                  color: primaryTextColor,
+                  fontSize: 24),
               titleLarge: TextStyle(
                   fontFamily: defaultFontFamily,
                   fontWeight: FontWeight.bold,
-                  color: primaryTextColor),
+                  color: primaryTextColor,
+                  fontSize: 18),
               titleMedium: TextStyle(
                   fontFamily: defaultFontFamily,
                   color: secondaryTextColor,
@@ -68,13 +75,116 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(32, 0, 0, 24),
               child: Text(
                 'Explore today’s',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.displayLarge,
               ),
             ),
-            StoryList(stories: stories)
+            StoryList(stories: stories),
+            const SizedBox(
+              height: 16,
+            ),
+            const CategoryList()
           ]),
         ),
       ),
+    );
+  }
+}
+
+class CategoryList extends StatelessWidget {
+  const CategoryList({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final categories = AppDatabase.categories;
+    return CarouselSlider.builder(
+        itemCount: categories.length,
+        itemBuilder: (context, index, realIndex) {
+          return CategoryItem(
+            left: realIndex == 0 ? 32 : 8,
+            right: realIndex == categories.length - 1 ? 32 : 8,
+            category: categories[realIndex],
+          );
+        },
+        options: CarouselOptions(
+          scrollDirection: Axis.horizontal, // Main Axis of slider
+          viewportFraction: 0.8, // How much of page will be got
+          // We can set the ratio of each image
+          // If we set it 1, each item is a rectangle
+          aspectRatio: 1.2,
+          initialPage: 0,
+          disableCenter: true,
+          enableInfiniteScroll: false,
+          enlargeCenterPage: true,
+          enlargeStrategy: CenterPageEnlargeStrategy.scale,
+        ));
+  }
+}
+
+class CategoryItem extends StatelessWidget {
+  final Category category;
+  final double left;
+  final double right;
+  const CategoryItem({
+    Key? key,
+    required this.category,
+    required this.left,
+    required this.right,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned.fill(
+            top: 100,
+            right: 65,
+            left: 65,
+            bottom: 24,
+            child: Container(
+              decoration: const BoxDecoration(boxShadow: [
+                BoxShadow(blurRadius: 20, color: Color(0xaa0D253C))
+              ]),
+            )),
+        Positioned.fill(
+          left: left,
+          right: right,
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32),
+            ),
+            foregroundDecoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(32),
+                gradient: const LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.center,
+                    colors: [
+                      Color(0xff0D253C),
+                      Colors.transparent,
+                    ])),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: Image.asset(
+                'assets/img/posts/large/${category.imageFileName}',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 48,
+          left: 42,
+          child: Text(
+            category.title,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .apply(color: Colors.white),
+          ),
+        )
+      ],
     );
   }
 }
