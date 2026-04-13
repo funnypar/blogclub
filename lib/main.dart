@@ -1,3 +1,4 @@
+import 'package:blogclub/article.dart';
 import 'package:blogclub/gen/fonts.gen.dart';
 import 'package:blogclub/home.dart';
 import 'package:blogclub/profile.dart';
@@ -87,7 +88,175 @@ class MyApp extends StatelessWidget {
       //     Positioned(bottom: 0, right: 0, left: 0, child: BottomNavigation())
       //   ],
       // ),
-      home: const ProfileScreen(),
+      home: const MainScreen(),
+    );
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+enum ScreensEnum { homeScreen, articleScreen, searchScreen, profileScreen }
+
+class _MainScreenState extends State<MainScreen> {
+  ScreensEnum selectedScreenIndex = ScreensEnum.homeScreen;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(children: [
+        Positioned.fill(
+          bottom: 65,
+          child: IndexedStack(
+            index: selectedScreenIndex.index,
+            children: const [
+              HomeScreen(),
+              ArticleScreen(),
+              SearchScreen(),
+              ProfileScreen()
+            ],
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          left: 0,
+          child: BottomNavigation(
+            onTap: (val) => {
+              setState(() {
+                selectedScreenIndex = val;
+              })
+            },
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+class SearchScreen extends StatelessWidget {
+  const SearchScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+          child: Text(
+        'Search Screen',
+        style: Theme.of(context).textTheme.headlineMedium,
+      )),
+    );
+  }
+}
+
+class BottomNavigation extends StatelessWidget {
+  const BottomNavigation({Key? key, required this.onTap}) : super(key: key);
+
+  final Function(ScreensEnum index) onTap;
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 85,
+      child: Stack(
+        children: [
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              height: 65,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: const [
+                    BoxShadow(blurRadius: 20, color: Color(0xaa9B8487))
+                  ],
+                  border: Border.all(color: Colors.white, width: 4)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ButtomNavigationItem(
+                    iconFileName: 'Home.png',
+                    activeIconFileName: 'Home.png',
+                    title: 'Home',
+                    onTap: () => onTap(ScreensEnum.homeScreen),
+                  ),
+                  ButtomNavigationItem(
+                    iconFileName: 'Articles.png',
+                    activeIconFileName: 'Articles.png',
+                    title: 'Article',
+                    onTap: () => onTap(ScreensEnum.articleScreen),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  ButtomNavigationItem(
+                    iconFileName: 'Search.png',
+                    activeIconFileName: 'Search.png',
+                    title: 'Search',
+                    onTap: () => onTap(ScreensEnum.searchScreen),
+                  ),
+                  ButtomNavigationItem(
+                    iconFileName: 'Menu.png',
+                    activeIconFileName: 'Menu.png',
+                    title: 'Menu',
+                    onTap: () => onTap(ScreensEnum.profileScreen),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Center(
+            child: Container(
+              alignment: Alignment.topCenter,
+              width: 65,
+              height: 85,
+              child: Container(
+                height: 65,
+                child: Image.asset('assets/img/icons/plus.png'),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(32.5),
+                  color: const Color(0xff376AED),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class ButtomNavigationItem extends StatelessWidget {
+  final String iconFileName;
+  final String activeIconFileName;
+  final String title;
+  final Function() onTap;
+
+  const ButtomNavigationItem(
+      {Key? key,
+      required this.iconFileName,
+      required this.activeIconFileName,
+      required this.title,
+      required this.onTap})
+      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset('assets/img/icons/$iconFileName'),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.bodySmall,
+          )
+        ],
+      ),
     );
   }
 }
