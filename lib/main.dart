@@ -1,6 +1,6 @@
-import 'package:blogclub/article.dart';
 import 'package:blogclub/gen/fonts.gen.dart';
 import 'package:blogclub/home.dart';
+import 'package:blogclub/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -76,6 +76,10 @@ class MyApp extends StatelessWidget {
                 color: Color(0xff7B8BB2),
                 fontWeight: FontWeight.w700,
                 fontSize: 10),
+            bodyLarge: TextStyle(
+                fontFamily: FontFamily.avenir,
+                color: primaryTextColor,
+                fontSize: 14),
           )),
       // home: Stack(
       //   children: [
@@ -83,7 +87,7 @@ class MyApp extends StatelessWidget {
       //     Positioned(bottom: 0, right: 0, left: 0, child: BottomNavigation())
       //   ],
       // ),
-      home: const ArticleScreen(),
+      home: const ProfileScreen(),
     );
   }
 }
