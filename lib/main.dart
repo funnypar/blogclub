@@ -1,6 +1,6 @@
+import 'package:blogclub/article.dart';
 import 'package:blogclub/gen/fonts.gen.dart';
 import 'package:blogclub/home.dart';
-import 'package:blogclub/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -27,6 +27,13 @@ class MyApp extends StatelessWidget {
       scrollBehavior: MyCustomScrollBehavior(),
       title: 'Flutter Demo',
       theme: ThemeData(
+          snackBarTheme: const SnackBarThemeData(backgroundColor: primaryColor),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            foregroundColor: primaryTextColor,
+            // This is the padding of appbar from edges
+            titleSpacing: 32,
+          ),
           colorScheme: const ColorScheme.light(
               primary: primaryColor,
               onPrimary: Colors.white,
@@ -76,7 +83,7 @@ class MyApp extends StatelessWidget {
       //     Positioned(bottom: 0, right: 0, left: 0, child: BottomNavigation())
       //   ],
       // ),
-      home: const SplashScreen(),
+      home: const ArticleScreen(),
     );
   }
 }
