@@ -1,4 +1,5 @@
 import 'package:blogclub/gen/assets.gen.dart';
+import 'package:blogclub/main.dart';
 import 'package:flutter/material.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -124,7 +125,8 @@ class _Login extends StatelessWidget {
           height: 24,
         ),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const MainScreen())),
           child: const Text(
             'LOGIN',
             style: TextStyle(color: Colors.white),
@@ -213,7 +215,8 @@ class _SignUp extends StatelessWidget {
           height: 24,
         ),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const MainScreen())),
           child: const Text(
             'Sign Up',
             style: TextStyle(color: Colors.white),

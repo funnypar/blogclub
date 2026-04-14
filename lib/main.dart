@@ -2,6 +2,7 @@ import 'package:blogclub/article.dart';
 import 'package:blogclub/gen/fonts.gen.dart';
 import 'package:blogclub/home.dart';
 import 'package:blogclub/profile.dart';
+import 'package:blogclub/splash.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
     const primaryColor = Color(0xff376AED);
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         textButtonTheme: TextButtonThemeData(
@@ -94,7 +96,7 @@ class MyApp extends StatelessWidget {
       //     Positioned(bottom: 0, right: 0, left: 0, child: _BottomNavigation())
       //   ],
       // ),
-      home: const MainScreen(),
+      home: const SplashScreen(),
     );
   }
 }
@@ -262,7 +264,6 @@ class _BottomNavigation extends StatelessWidget {
                 children: [
                   BottomNavigationItem(
                       iconFileName: 'Home.png',
-                      activeIconFileName: 'HomeActive.png',
                       onTap: () {
                         onTap(homeIndex);
                       },
@@ -270,7 +271,6 @@ class _BottomNavigation extends StatelessWidget {
                       title: 'Home'),
                   BottomNavigationItem(
                       iconFileName: 'Articles.png',
-                      activeIconFileName: 'ArticlesActive.png',
                       onTap: () {
                         onTap(articleIndex);
                       },
@@ -281,7 +281,6 @@ class _BottomNavigation extends StatelessWidget {
                   ),
                   BottomNavigationItem(
                       iconFileName: 'Search.png',
-                      activeIconFileName: 'SearchActive.png',
                       onTap: () {
                         onTap(searchIndex);
                       },
@@ -289,7 +288,6 @@ class _BottomNavigation extends StatelessWidget {
                       title: 'Search'),
                   BottomNavigationItem(
                       iconFileName: 'Menu.png',
-                      activeIconFileName: 'MenuActive.png',
                       onTap: () {
                         onTap(menuIndex);
                       },
@@ -322,7 +320,6 @@ class _BottomNavigation extends StatelessWidget {
 
 class BottomNavigationItem extends StatelessWidget {
   final String iconFileName;
-  final String activeIconFileName;
   final String title;
   final bool isActive;
   final Function() onTap;
@@ -330,7 +327,6 @@ class BottomNavigationItem extends StatelessWidget {
   const BottomNavigationItem(
       {Key? key,
       required this.iconFileName,
-      required this.activeIconFileName,
       required this.title,
       required this.onTap,
       required this.isActive})
@@ -346,7 +342,7 @@ class BottomNavigationItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/img/icons/${isActive ? activeIconFileName : iconFileName}',
+              'assets/img/icons/$iconFileName',
               width: 24,
               height: 24,
             ),
