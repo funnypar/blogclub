@@ -157,22 +157,15 @@ class _MainScreenState extends State<MainScreen> {
               child: IndexedStack(
                 index: selectedScreenIndex,
                 children: [
-                  Navigator(
-                      key: _homeKey,
-                      onGenerateRoute: (settings) => MaterialPageRoute(
-                          builder: (context) => HomeScreen())),
-                  Navigator(
-                      key: _articleKey,
-                      onGenerateRoute: (settings) => MaterialPageRoute(
-                          builder: (context) => ArticleScreen())),
-                  Navigator(
-                      key: _searchKey,
-                      onGenerateRoute: (settings) => MaterialPageRoute(
-                          builder: (context) => SimpleScreen())),
-                  Navigator(
-                      key: _menuKey,
-                      onGenerateRoute: (settings) => MaterialPageRoute(
-                          builder: (context) => ProfileScreen())),
+                  _navigator(_homeKey, homeIndex, const HomeScreen()),
+                  _navigator(_articleKey, articleIndex, const ArticleScreen()),
+                  _navigator(
+                      _searchKey,
+                      searchIndex,
+                      const SimpleScreen(
+                        tabName: 'Search',
+                      )),
+                  _navigator(_menuKey, menuIndex, const ProfileScreen()),
                 ],
               ),
             ),
@@ -196,12 +189,23 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
+
+  Widget _navigator(GlobalKey key, int index, Widget child) {
+    return key.currentState == null && selectedScreenIndex != index
+        ? Container()
+        : Navigator(
+            key: key,
+            onGenerateRoute: (settings) => MaterialPageRoute(
+                builder: (context) => Offstage(
+                    offstage: selectedScreenIndex != index, child: child)));
+  }
 }
 
-int screenNumber = 1;
-
 class SimpleScreen extends StatelessWidget {
-  const SimpleScreen({Key? key}) : super(key: key);
+  const SimpleScreen({Key? key, required this.tabName, this.screenNumber = 1})
+      : super(key: key);
+  final String tabName;
+  final int screenNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -210,17 +214,18 @@ class SimpleScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Screen #$screenNumber',
+            'Tab: $tabName, Screen #$screenNumber',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           ElevatedButton(
               onPressed: () {
-                screenNumber++;
-
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => SimpleScreen()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => SimpleScreen(
+                          tabName: tabName,
+                          screenNumber: screenNumber + 1,
+                        )));
               },
-              child: const Text('Click Me')),
+              child: Text('Click Me')),
         ],
       ),
     );
@@ -257,6 +262,7 @@ class _BottomNavigation extends StatelessWidget {
                 children: [
                   BottomNavigationItem(
                       iconFileName: 'Home.png',
+                      activeIconFileName: 'HomeActive.png',
                       onTap: () {
                         onTap(homeIndex);
                       },
@@ -264,6 +270,7 @@ class _BottomNavigation extends StatelessWidget {
                       title: 'Home'),
                   BottomNavigationItem(
                       iconFileName: 'Articles.png',
+                      activeIconFileName: 'ArticlesActive.png',
                       onTap: () {
                         onTap(articleIndex);
                       },
@@ -274,6 +281,7 @@ class _BottomNavigation extends StatelessWidget {
                   ),
                   BottomNavigationItem(
                       iconFileName: 'Search.png',
+                      activeIconFileName: 'SearchActive.png',
                       onTap: () {
                         onTap(searchIndex);
                       },
@@ -281,6 +289,7 @@ class _BottomNavigation extends StatelessWidget {
                       title: 'Search'),
                   BottomNavigationItem(
                       iconFileName: 'Menu.png',
+                      activeIconFileName: 'MenuActive.png',
                       onTap: () {
                         onTap(menuIndex);
                       },
@@ -313,6 +322,7 @@ class _BottomNavigation extends StatelessWidget {
 
 class BottomNavigationItem extends StatelessWidget {
   final String iconFileName;
+  final String activeIconFileName;
   final String title;
   final bool isActive;
   final Function() onTap;
@@ -320,6 +330,7 @@ class BottomNavigationItem extends StatelessWidget {
   const BottomNavigationItem(
       {Key? key,
       required this.iconFileName,
+      required this.activeIconFileName,
       required this.title,
       required this.onTap,
       required this.isActive})
@@ -335,7 +346,7 @@ class BottomNavigationItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/img/icons/$iconFileName',
+              'assets/img/icons/${isActive ? activeIconFileName : iconFileName}',
               width: 24,
               height: 24,
             ),
